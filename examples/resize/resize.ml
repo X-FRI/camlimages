@@ -30,7 +30,7 @@ let () =
   Bitmap.maximum_live := 15000000; (* 60MB *)
   Bitmap.maximum_block_size := !Bitmap.maximum_live / 16;
   let r = Gc.get () in
-  r.Gc.max_overhead <- 30;
+  Gc.set { r with max_overhead= 30 };
   Gc.set r;
 
   let fmt, _ = Images.file_format file in

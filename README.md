@@ -2,12 +2,6 @@
 CamlImages - Objective Caml image processing library
 ========================================================
 
-The latest released version is 4.1.3.
-========================================================
-
-Note: This library is currently under development.
-========================================================
-
 What is CamlImages ?
 ========================================================
 

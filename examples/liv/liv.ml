@@ -66,7 +66,7 @@ let _ =
   let dirsample = ref false in
   let size = ref false in
 
-  Random.init (Pervasives.truncate (Unix.time ()));
+  Random.init (Stdlib.truncate (Unix.time ()));
   Arg.parse 
     [
       "-random", Arg.Unit (fun () -> random := true), ": random mode";
