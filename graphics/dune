@@ -3,4 +3,4 @@
  (public_name camlimages.graphics)
  (optional)
  (wrapped false)
- (libraries camlimages.core grahpics))
+ (libraries camlimages.core graphics))
