@@ -1,3 +1,6 @@
+5.0.4
+	- Typo fix of graphics/dune
+
 5.0.3
 	- Port to OCaml 4.10, with dune-configurator. (Shakthi Kannan <author@shakthimaan.com>)
 
