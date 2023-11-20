@@ -31,11 +31,11 @@ value init_FreeType()
   FT_Library *library;
 
   if( (library = stat_alloc( sizeof(FT_Library) )) == NULL ){
-    failwith( "init_FreeType: Memory over" );
+    caml_failwith( "init_FreeType: Memory over" );
   }
   if( FT_Init_FreeType( library ) ){
     stat_free(library);
-    failwith( "FT_Init_FreeType" );
+    caml_failwith( "FT_Init_FreeType" );
   }
   CAMLreturn( (value) library );
 }
@@ -45,7 +45,7 @@ value done_FreeType( library )
 {
   CAMLparam1(library);
   if ( FT_Done_FreeType( *(FT_Library *)library ) ){
-    failwith( "FT_Done_FreeType" );
+    caml_failwith( "FT_Done_FreeType" );
   }
   stat_free( (void *) library );
   CAMLreturn(Val_unit);
@@ -61,11 +61,11 @@ value new_Face( library, fontpath, idx )
   FT_Face *face;
 
   if( (face = stat_alloc( sizeof(FT_Face) )) == NULL ){
-    failwith( "new_Face: Memory over" );
+    caml_failwith( "new_Face: Memory over" );
   }
   if( FT_New_Face( *(FT_Library *)library, String_val( fontpath ), Int_val( idx ), face ) ){
     stat_free(face);
-    failwith( "new_Face: Could not open face" );
+    caml_failwith( "new_Face: Could not open face" );
   }
   CAMLreturn( (value) face );
 }
@@ -101,7 +101,7 @@ value done_Face( face )
 {
   CAMLparam1(face);
   if ( FT_Done_Face( *(FT_Face *) face ) ){
-    failwith("FT_Done_Face");
+    caml_failwith("FT_Done_Face");
   }
   CAMLreturn( Val_unit );
 }
@@ -123,7 +123,7 @@ value set_Char_Size( face, char_w, char_h, res_h, res_v )
   if ( FT_Set_Char_Size( *(FT_Face *) face,
 		    Int_val(char_w), Int_val(char_h),
 			 Int_val(res_h), Int_val(res_v) ) ){
-    failwith("FT_Set_Char_Size");
+    caml_failwith("FT_Set_Char_Size");
   }
   CAMLreturn(Val_unit);
 }
@@ -138,7 +138,7 @@ value set_Pixel_Sizes( face, pixel_w, pixel_h )
   CAMLparam3(face,pixel_w,pixel_h);
   if ( FT_Set_Pixel_Sizes( *(FT_Face *) face,
 			 Int_val(pixel_w), Int_val(pixel_h) ) ){
-    failwith("FT_Set_Pixel_Sizes");
+    caml_failwith("FT_Set_Pixel_Sizes");
   }
   CAMLreturn(Val_unit);
 }
@@ -203,14 +203,14 @@ value set_CharMap( facev, charmapv )
     if ( charmap->platform_id == my_pid &&
 	 charmap->encoding_id == my_eid ){
       if ( FT_Set_Charmap( face, charmap ) ){
-	failwith("FT_Set_Charmap");
+	caml_failwith("FT_Set_Charmap");
       }
       CAMLreturn(Val_unit);
     } else {
       i++;
     }
   }
-  failwith("freetype:set_charmaps: selected pid+eid do not exist");
+  caml_failwith("freetype:set_charmaps: selected pid+eid do not exist");
 }
 
 value get_Char_Index( face, code )
@@ -227,7 +227,7 @@ value load_Glyph( face, index, flags )
   CAMLlocal1(res);
 
   if( FT_Load_Glyph( *(FT_Face *) face, Int_val(index), FT_LOAD_DEFAULT | Int_val(flags)) ){
-    failwith("FT_Load_Glyph");
+    caml_failwith("FT_Load_Glyph");
   }
 
   res = alloc_tuple(2);
@@ -245,7 +245,7 @@ value load_Char( face, code, flags )
 
   /* FT_Load_Glyph(face, FT_Get_Char_Index( face, code )) */
   if( FT_Load_Char( *(FT_Face *) face, Int_val(code), FT_LOAD_DEFAULT | Int_val(flags)) ){
-    failwith("FT_Load_Char");
+    caml_failwith("FT_Load_Char");
   }
 
   res = alloc_tuple(2);
@@ -261,7 +261,7 @@ value render_Glyph_of_Face( face, mode )
 {
   CAMLparam2(face,mode);
   if (FT_Render_Glyph( (*(FT_Face *)face)->glyph , Int_val(mode) )){
-    failwith("FT_Render_Glyph");
+    caml_failwith("FT_Render_Glyph");
   }
   CAMLreturn(Val_unit);
 }
@@ -277,7 +277,7 @@ value render_Char( face, code, flags, mode )
 		    FT_LOAD_RENDER |
 		    Int_val(flags) |
 		    (Int_val(mode) ? FT_LOAD_MONOCHROME : 0)) ){
-    failwith("FT_Load_Char");
+    caml_failwith("FT_Load_Char");
   }
 
   res = alloc_tuple(2);
@@ -318,13 +318,13 @@ value get_Bitmap_Info( vface )
   switch ( bitmap.pixel_mode ) {
   case ft_pixel_mode_grays:
     if ( bitmap.num_grays != 256 ){
-      failwith("get_Bitmap_Info: unknown num_grays");
+      caml_failwith("get_Bitmap_Info: unknown num_grays");
     }
     break;
   case ft_pixel_mode_mono:
     break;
   default:
-    failwith("get_Bitmap_Info: unknown pixel mode");
+    caml_failwith("get_Bitmap_Info: unknown pixel mode");
   }
 
   res = alloc_tuple(5);
@@ -369,7 +369,7 @@ value read_Bitmap( vface, vx, vy ) /* This "y" is in Y upwards convention */
     break;
 
   default:
-    failwith("read_Bitmap: unknown pixel mode");
+    caml_failwith("read_Bitmap: unknown pixel mode");
   }
 
 }
@@ -482,27 +482,27 @@ value get_Outline_Contents(value face) {
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-value init_FreeType(){ failwith("unsupported"); }
-value done_FreeType(){ failwith("unsupported"); }
-value new_Face(){ failwith("unsupported"); }
-value face_info(){ failwith("unsupported"); }
-value done_Face(){ failwith("unsupported"); }
-value get_num_glyphs(){ failwith("unsupported"); }
-value set_Char_Size(){ failwith("unsupported"); }
-value set_Pixel_Sizes(){ failwith("unsupported"); }
-value val_CharMap(){ failwith("unsupported"); }
-value get_CharMaps(){ failwith("unsupported"); }
-value set_CharMap(){ failwith("unsupported"); }
-value get_Char_Index(){ failwith("unsupported"); }
-value load_Glyph(){ failwith("unsupported"); }
-value load_Char(){ failwith("unsupported"); }
-value render_Glyph_of_Face(){ failwith("unsupported"); }
-value render_Char(){ failwith("unsupported"); }
-value set_Transform(){ failwith("unsupported"); }
-value get_Bitmap_Info(){ failwith("unsupported"); }
-value read_Bitmap(){ failwith("unsupported"); }
-value get_Glyph_Metrics(){ failwith("unsupported"); }
-value get_Size_Metrics(){ failwith("unsupported"); }
-value get_Outline_Contents(){ failwith("unsupported"); }
+value init_FreeType(){ caml_failwith("unsupported"); }
+value done_FreeType(){ caml_failwith("unsupported"); }
+value new_Face(){ caml_failwith("unsupported"); }
+value face_info(){ caml_failwith("unsupported"); }
+value done_Face(){ caml_failwith("unsupported"); }
+value get_num_glyphs(){ caml_failwith("unsupported"); }
+value set_Char_Size(){ caml_failwith("unsupported"); }
+value set_Pixel_Sizes(){ caml_failwith("unsupported"); }
+value val_CharMap(){ caml_failwith("unsupported"); }
+value get_CharMaps(){ caml_failwith("unsupported"); }
+value set_CharMap(){ caml_failwith("unsupported"); }
+value get_Char_Index(){ caml_failwith("unsupported"); }
+value load_Glyph(){ caml_failwith("unsupported"); }
+value load_Char(){ caml_failwith("unsupported"); }
+value render_Glyph_of_Face(){ caml_failwith("unsupported"); }
+value render_Char(){ caml_failwith("unsupported"); }
+value set_Transform(){ caml_failwith("unsupported"); }
+value get_Bitmap_Info(){ caml_failwith("unsupported"); }
+value read_Bitmap(){ caml_failwith("unsupported"); }
+value get_Glyph_Metrics(){ caml_failwith("unsupported"); }
+value get_Size_Metrics(){ caml_failwith("unsupported"); }
+value get_Outline_Contents(){ caml_failwith("unsupported"); }
 
 #endif // HAS_FREETYPE

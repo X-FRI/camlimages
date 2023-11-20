@@ -50,7 +50,7 @@ value read_png_file_as_rgb24( name )
   filename = String_val( name );
 
   if (( fp = fopen(filename, "rb")) == NULL ){
-    failwith("png file open failed");
+    caml_failwith("png file open failed");
   }
 
    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
@@ -59,14 +59,14 @@ value read_png_file_as_rgb24( name )
 
   if( png_ptr == NULL ){
     fclose(fp);
-    failwith("it is not a png file.");
+    caml_failwith("it is not a png file.");
   }
 
   info_ptr = png_create_info_struct(png_ptr);
   if(info_ptr == NULL ){
     fclose(fp);
     png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-    failwith("not enough memory");
+    caml_failwith("not enough memory");
   }
 
   /* error handling */
@@ -75,7 +75,7 @@ value read_png_file_as_rgb24( name )
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
     fclose(fp);
     /* If we get here, we had a problem reading the file */
-    failwith("png read error");
+    caml_failwith("png read error");
   }
 
   /* use standard C stream */
@@ -110,7 +110,7 @@ value read_png_file_as_rgb24( name )
   if ( color_type != PNG_COLOR_TYPE_RGB || bit_depth != 8 ) {
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
     fclose(fp);
-    failwith("unsupported color type");
+    caml_failwith("unsupported color type");
   }
 
   rowbytes = png_get_rowbytes(png_ptr, info_ptr);
@@ -119,7 +119,7 @@ value read_png_file_as_rgb24( name )
   if (oversized(rowbytes, height) || oversized(sizeof(png_bytep), height)){
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
     fclose(fp);
-    failwith("png error: image contains oversized or bogus width and height");
+    caml_failwith("png error: image contains oversized or bogus width and height");
   }
   
   {
@@ -224,7 +224,7 @@ value read_png_file( name )
   filename = String_val( name );
 
   if (( fp = fopen(filename, "rb")) == NULL ){
-    failwith("png file open failed");
+    caml_failwith("png file open failed");
   }
 
    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
@@ -233,14 +233,14 @@ value read_png_file( name )
 
   if( png_ptr == NULL ){
     fclose(fp);
-    failwith("it is not a png file.");
+    caml_failwith("it is not a png file.");
   }
 
   info_ptr = png_create_info_struct(png_ptr);
   if(info_ptr == NULL ){
     fclose(fp);
     png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-    failwith("not enough memory");
+    caml_failwith("not enough memory");
   }
 
   /* error handling */
@@ -249,7 +249,7 @@ value read_png_file( name )
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
     fclose(fp);
     /* If we get here, we had a problem reading the file */
-    failwith("png read error");
+    caml_failwith("png read error");
   }
 
   /* use standard C stream */
@@ -347,7 +347,7 @@ fprintf(stderr, "pngread.c: byte/pix= %d/%d\n", (int)(rowbytes), (int)width); ff
                   (int)rowbytes, (int)width);
 	  stat_free(buf);
           stat_free((void*)row_pointers);
-          failwith(mesg);
+          caml_failwith(mesg);
         }
 
         r1 = alloc( 2, tag );
@@ -393,7 +393,7 @@ sc      fprintf(stderr, "width rowbytes: %d %d\n", width, rowbytes); fflush(stde
               (int)color_type);
       stat_free(buf);
       stat_free((void*)row_pointers);
-      failwith(mesg);
+      caml_failwith(mesg);
     }
 
     png_read_end(png_ptr, info_ptr);
@@ -415,11 +415,11 @@ sc      fprintf(stderr, "width rowbytes: %d %d\n", width, rowbytes); fflush(stde
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-value read_png_file_as_rgb24(){ failwith("unsupported"); }
-value Val_PngColor(){ failwith("unsupported"); }
-value Val_PngPalette(){ failwith("unsupported"); }
-value read_png_file(){ failwith("unsupported"); }
-value write_png_file_rgb(){ failwith("unsupported"); }
-value write_png_file_index(){ failwith("unsupported"); }
+value read_png_file_as_rgb24(){ caml_failwith("unsupported"); }
+value Val_PngColor(){ caml_failwith("unsupported"); }
+value Val_PngPalette(){ caml_failwith("unsupported"); }
+value read_png_file(){ caml_failwith("unsupported"); }
+value write_png_file_rgb(){ caml_failwith("unsupported"); }
+value write_png_file_index(){ caml_failwith("unsupported"); }
 
 #endif // HAS_PNG

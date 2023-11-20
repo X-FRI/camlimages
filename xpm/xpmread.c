@@ -88,7 +88,7 @@ value read_xpm_file( name )
 
     CAMLreturn(result);
   } else {
-    failwith("failed to open xpm file");
+    caml_failwith("failed to open xpm file");
   }
 }
 
@@ -99,6 +99,6 @@ value read_xpm_file( name )
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-value read_xpm_file(){ failwith("unsupported"); }
+value read_xpm_file(){ caml_failwith("unsupported"); }
 
 #endif

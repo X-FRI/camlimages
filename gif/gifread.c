@@ -153,7 +153,7 @@ value dGifOpenFileName( value name )
 #endif
 
   if(GifFile == NULL){
-    failwith("DGifOpenFileName");
+    caml_failwith("DGifOpenFileName");
   }
 
   r[0] = Val_ScreenInfo( GifFile );
@@ -187,7 +187,7 @@ value dGifGetRecordType( value hdl )
 
   GifRecordType RecordType;
   if (DGifGetRecordType((GifFileType*) hdl, &RecordType) == GIF_ERROR) {
-    failwith("DGifGetRecordType");
+    caml_failwith("DGifGetRecordType");
   }
   CAMLreturn(Val_int(RecordType));
 }
@@ -197,7 +197,7 @@ value dGifGetImageDesc( value hdl )
   CAMLparam1(hdl);
 
   if (DGifGetImageDesc( (GifFileType*) hdl )  == GIF_ERROR){
-    failwith("DGIFGetImageDesc");
+    caml_failwith("DGIFGetImageDesc");
   }
   CAMLreturn(Val_GifImageDesc( &((GifFileType*) hdl)-> Image ));
 }
@@ -217,7 +217,7 @@ value dGifGetLine( value hdl )
   if( DGifGetLine(GifFile, (unsigned char*)String_val(buf), GifFile->Image.Width ) 
       == GIF_ERROR ){
     // PrintGifError ();
-    failwith("DGifGetLine");
+    caml_failwith("DGifGetLine");
   }
   CAMLreturn(buf);
 }
@@ -235,7 +235,7 @@ value dGifGetExtension( value hdl )
   exts = Val_int(0);
 
   if (DGifGetExtension(GifFile,&func, &extData) == GIF_ERROR){
-    failwith("DGifGetExtension");
+    caml_failwith("DGifGetExtension");
   }
 
   while( extData != NULL ){
@@ -261,21 +261,21 @@ value dGifGetExtension( value hdl )
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-value Val_GifColorType(){ failwith("unsupported"); }
-value Val_ColorMapObject(){ failwith("unsupported"); }
-value Val_GifImageDesc(){ failwith("unsupported"); }
-value Val_ScreenInfo(){ failwith("unsupported"); }
-value dGifOpenFileName(){ failwith("unsupported"); }
-value dGifCloseFile(){ failwith("unsupported"); }
-value dGifGetRecordType(){ failwith("unsupported"); }
-value dGifGetImageDesc(){ failwith("unsupported"); }
-value dGifGetLine(){ failwith("unsupported"); }
-value dGifGetExtension(){ failwith("unsupported"); }
-value eGifOpenFileName(){ failwith("unsupported"); }
-value eGifCloseFile(){ failwith("unsupported"); }
-value eGifPutScreenDesc(){ failwith("unsupported"); }
-value eGifPutImageDesc(){ failwith("unsupported"); }
-value eGifPutLine(){ failwith("unsupported"); }
-value eGifPutExtension(){ failwith("unsupported"); }
+value Val_GifColorType(){ caml_failwith("unsupported"); }
+value Val_ColorMapObject(){ caml_failwith("unsupported"); }
+value Val_GifImageDesc(){ caml_failwith("unsupported"); }
+value Val_ScreenInfo(){ caml_failwith("unsupported"); }
+value dGifOpenFileName(){ caml_failwith("unsupported"); }
+value dGifCloseFile(){ caml_failwith("unsupported"); }
+value dGifGetRecordType(){ caml_failwith("unsupported"); }
+value dGifGetImageDesc(){ caml_failwith("unsupported"); }
+value dGifGetLine(){ caml_failwith("unsupported"); }
+value dGifGetExtension(){ caml_failwith("unsupported"); }
+value eGifOpenFileName(){ caml_failwith("unsupported"); }
+value eGifCloseFile(){ caml_failwith("unsupported"); }
+value eGifPutScreenDesc(){ caml_failwith("unsupported"); }
+value eGifPutImageDesc(){ caml_failwith("unsupported"); }
+value eGifPutLine(){ caml_failwith("unsupported"); }
+value eGifPutExtension(){ caml_failwith("unsupported"); }
 
 #endif // HAS_GIF
