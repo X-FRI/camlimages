@@ -149,7 +149,7 @@ value open_jpeg_file_for_read( name )
   filename= String_val( name );
 
   if ((infile = fopen(filename, "rb")) == NULL) {
-    failwith("failed to open jpeg file");
+    caml_failwith("failed to open jpeg file");
   }
 
   cinfop = malloc(sizeof (struct jpeg_decompress_struct));
@@ -175,7 +175,7 @@ value open_jpeg_file_for_read( name )
     jpeg_destroy_decompress(cinfop);
     free(jerrp);
     fclose(infile);
-    failwith(jpg_error_message);
+    caml_failwith(jpg_error_message);
   }
   /* Now we can initialize the JPEG decompression object. */
   jpeg_create_decompress(cinfop);
@@ -345,19 +345,19 @@ value close_jpeg_file_for_read( jpegh )
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-value jpeg_set_scale_denom(){ failwith("unsupported"); }
-value open_jpeg_file_for_read(){ failwith("unsupported"); }
-value open_jpeg_file_for_read_start(){ failwith("unsupported"); }
-value read_jpeg_scanline(){ failwith("unsupported"); }
-value read_jpeg_scanlines(){ failwith("unsupported"); }
-value close_jpeg_file_for_read(){ failwith("unsupported"); }
-value open_jpeg_file_for_write_colorspace(){ failwith("unsupported"); }
-value open_jpeg_file_for_write(){ failwith("unsupported"); }
-value open_jpeg_file_for_write_cmyk(){ failwith("unsupported"); }
-value write_jpeg_scanline(){ failwith("unsupported"); }
-value close_jpeg_file_for_write(){ failwith("unsupported"); }
-value read_JPEG_file(){ failwith("unsupported"); }
-value write_JPEG_file(){ failwith("unsupported"); }
-void caml_jpeg_write_marker(){ failwith("unsupported"); }
+value jpeg_set_scale_denom(){ caml_failwith("unsupported"); }
+value open_jpeg_file_for_read(){ caml_failwith("unsupported"); }
+value open_jpeg_file_for_read_start(){ caml_failwith("unsupported"); }
+value read_jpeg_scanline(){ caml_failwith("unsupported"); }
+value read_jpeg_scanlines(){ caml_failwith("unsupported"); }
+value close_jpeg_file_for_read(){ caml_failwith("unsupported"); }
+value open_jpeg_file_for_write_colorspace(){ caml_failwith("unsupported"); }
+value open_jpeg_file_for_write(){ caml_failwith("unsupported"); }
+value open_jpeg_file_for_write_cmyk(){ caml_failwith("unsupported"); }
+value write_jpeg_scanline(){ caml_failwith("unsupported"); }
+value close_jpeg_file_for_write(){ caml_failwith("unsupported"); }
+value read_JPEG_file(){ caml_failwith("unsupported"); }
+value write_JPEG_file(){ caml_failwith("unsupported"); }
+void caml_jpeg_write_marker(){ caml_failwith("unsupported"); }
 
 #endif // HAS_JPEG

@@ -298,7 +298,7 @@ value caml_exif_decode_entry(value vdata)
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-#define NA(x) value x(){ failwith("unsupported"); }
+#define NA(x) value x(){ caml_failwith("unsupported"); }
 
 NA(Val_ExifBytes)
 NA(Val_ExifSBytes)
