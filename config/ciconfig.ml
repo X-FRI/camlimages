@@ -1,9 +1,3 @@
-external (&) : ('a -> 'b) -> 'a -> 'b = "%apply"
-(** Haskell's [($)]. *)
-
-let (!%) fmt = Printf.sprintf fmt
-let (!!%) fmt = Format.eprintf fmt
-
 include XConfigurator.Make(struct let name = "camlimages" end)
 
 let lablgtk2 = find_ocaml_package "lablgtk2"
@@ -13,8 +7,8 @@ let graphics = find_ocaml_package "graphics"
 let gs = find_program "gs"
 
 let gif = find_library
-    [ by_pkg_config "libgif" 
-    ; by_cc ~c_flags:[] ~link_flags:["-lgif"] ~headers:["gif_lib.h"] ~functions:["DGifOpenFileName"] 
+    [ by_pkg_config "libgif"
+    ; by_cc ~c_flags:[] ~link_flags:["-lgif"] ~headers:["gif_lib.h"] ~functions:["DGifOpenFileName"]
     ]
 
 let jpeg = find_library
@@ -23,12 +17,12 @@ let jpeg = find_library
     ]
 
 let png = find_library
-    [ by_pkg_config "libpng" 
-    ; by_cc ~c_flags:[] ~link_flags:["-lpng"; "-lz"] ~headers:["png.h"] ~functions:["png_create_read_struct"] 
+    [ by_pkg_config "libpng"
+    ; by_cc ~c_flags:[] ~link_flags:["-lpng"; "-lz"] ~headers:["png.h"] ~functions:["png_create_read_struct"]
     ]
 
 let tiff = find_library
-    [ by_pkg_config "libtiff-4" 
+    [ by_pkg_config "libtiff-4"
     ; by_cc ~c_flags:[] ~link_flags:["-ltiff"] ~headers:["tiff.h"] ~functions:["TiffOpen"]
     ]
 
@@ -36,7 +30,7 @@ let freetype = find_library
     [ by_pkg_config "freetype2" ]
 
 let exif = find_library
-    [ by_pkg_config "libexif" 
+    [ by_pkg_config "libexif"
     ; by_cc ~c_flags:[] ~link_flags:["-lexif"] ~headers:["exif-data.h"] ~functions:["exif_data_load_data"]
     ]
 
