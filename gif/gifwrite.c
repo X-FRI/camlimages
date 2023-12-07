@@ -44,7 +44,7 @@ int list_length( value list )
 
 ColorMapObject *ColorMapObject_val( value cmap )
 {
-  // no caml allocation inside.
+  // no caml caml_allocation inside.
   int len;
   int i;
   ColorMapObject *cmapobj;
@@ -85,7 +85,7 @@ value eGifOpenFileName( name )
 #endif
 
   if (GifFileOut == NULL) {
-    failwith("EGifOpenFileName");
+    caml_failwith("EGifOpenFileName");
   }
   /* gcc -fwritable-strings is required to compile libungif */
 #if GIFLIB_BUG_FIXED
@@ -123,7 +123,7 @@ void eGifPutScreenDesc( value oc, value sdesc )
 			 Int_val(Field(sdesc, 2)),
 			 Int_val(Field(sdesc, 3)),
 			 ColorMapObject_val( Field(sdesc, 4) )) == GIF_ERROR){
-    failwith("EGifPutScreenDesc");
+    caml_failwith("EGifPutScreenDesc");
   }
   CAMLreturn0;
 }
@@ -140,7 +140,7 @@ void eGifPutImageDesc( value oc, value idesc )
 			Int_val(Field(idesc, 3)),
 			Int_val(Field(idesc, 4)),
 			ColorMapObject_val( Field(idesc, 5) )) == GIF_ERROR){
-    failwith("EGifPutImageDesc");
+    caml_failwith("EGifPutImageDesc");
   }
   CAMLreturn0;
 }
@@ -154,7 +154,7 @@ void eGifPutLine( value oc, value buf )
   if ( EGifPutLine(GifFileOut, (unsigned char*)String_val(buf), GifFileOut->Image.Width) 
        == GIF_ERROR ){
     // PrintGifError ();
-    failwith("EGifPutLine");
+    caml_failwith("EGifPutLine");
   }
   CAMLreturn0;
 }
@@ -173,17 +173,17 @@ void eGifPutExtension( value oc, value ext )
   extCode = Int_val(Field(ext,0));
   extLen = list_length( Field(ext,1) );
   if( (extension = malloc(sizeof(char*) * extLen)) == NULL ){
-    failwith("EGifPutExtension");
+    caml_failwith("EGifPutExtension");
   }
   for( i=0, l= Field(ext,1); i<extLen; i++, l= Field(l,1)){
     int len;
     char *str;
-    len = string_length( Field(l,0) );
+    len = caml_string_length( Field(l,0) );
     if( len > 255 ){
-      failwith("EGifPutExtension: strlen > 255");
+      caml_failwith("EGifPutExtension: strlen > 255");
     }
     if( (str = malloc(len + 1)) == NULL ){
-      failwith("EGifPutExtension");
+      caml_failwith("EGifPutExtension");
     }
     str[0] = len;
     memcpy(str+1, String_val(Field(l,0)), len);
@@ -194,7 +194,7 @@ void eGifPutExtension( value oc, value ext )
       free(extension[i]);
     }
     free(extension);
-    failwith("EGifPutExtension");
+    caml_failwith("EGifPutExtension");
   }
   CAMLreturn0;
 }

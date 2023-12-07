@@ -79,7 +79,7 @@ value open_tiff_file_for_write( value file,
 
     CAMLreturn( (value) tif);
   } else {
-    failwith("failed to open tiff file to write");
+    caml_failwith("failed to open tiff file to write");
   }
 }
 

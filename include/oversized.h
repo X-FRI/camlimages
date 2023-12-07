@@ -6,4 +6,4 @@
   ((x) < 0 || (y) < 0 || ((y) != 0 && (x) > INT_MAX / (y)))
 
 #define failwith_oversized(lib) \
-  failwith("#lib error: image contains oversized or bogus width and height");
+  caml_failwith("#lib error: image contains oversized or bogus width and height");

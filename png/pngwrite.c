@@ -46,19 +46,19 @@ value write_png_file_rgb( name, buffer, width, height, with_alpha )
   a = Bool_val(with_alpha);
 
   if (( fp = fopen(String_val(name), "wb")) == NULL ){
-    failwith("png file open failed");
+    caml_failwith("png file open failed");
   }
 
   if ((png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
                                         NULL, NULL, NULL)) == NULL ){
     fclose(fp);
-    failwith("png_create_write_struct");
+    caml_failwith("png_create_write_struct");
   }
 
   if( (info_ptr = png_create_info_struct(png_ptr)) == NULL ){
     fclose(fp);
     png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
-    failwith("png_create_info_struct");
+    caml_failwith("png_create_info_struct");
   }
 
   /* error handling */
@@ -67,7 +67,7 @@ value write_png_file_rgb( name, buffer, width, height, with_alpha )
     png_destroy_write_struct(&png_ptr, &info_ptr);
     fclose(fp);
     /* If we get here, we had a problem writing the file */
-    failwith("png write error");
+    caml_failwith("png write error");
   }
 
   /* use standard C stream */
@@ -94,7 +94,7 @@ value write_png_file_rgb( name, buffer, width, height, with_alpha )
     png_bytep *row_pointers;
     char *buf = String_val(buffer);
 
-    row_pointers = (png_bytep*)stat_alloc(sizeof(png_bytep) * h);
+    row_pointers = (png_bytep*)caml_stat_alloc(sizeof(png_bytep) * h);
 
     rowbytes= png_get_rowbytes(png_ptr, info_ptr);
 #if 0
@@ -105,7 +105,7 @@ value write_png_file_rgb( name, buffer, width, height, with_alpha )
     }
 
     png_write_image(png_ptr, row_pointers);
-    stat_free((void*)row_pointers);
+    caml_stat_free((void*)row_pointers);
   }
 
   png_write_end(png_ptr, info_ptr);
@@ -155,19 +155,19 @@ value write_png_file_index( name, buffer, cmap, width, height )
   h = Int_val(height);
 
   if (( fp = fopen(String_val(name), "wb")) == NULL ){
-    failwith("png file open failed");
+    caml_failwith("png file open failed");
   }
 
   if ((png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
                                         NULL, NULL, NULL)) == NULL ){
     fclose(fp);
-    failwith("png_create_write_struct");
+    caml_failwith("png_create_write_struct");
   }
 
   if( (info_ptr = png_create_info_struct(png_ptr)) == NULL ){
     fclose(fp);
     png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
-    failwith("png_create_info_struct");
+    caml_failwith("png_create_info_struct");
   }
 
   /* error handling */
@@ -176,7 +176,7 @@ value write_png_file_index( name, buffer, cmap, width, height )
     png_destroy_write_struct(&png_ptr, &info_ptr);
     fclose(fp);
     /* If we get here, we had a problem writing the file */
-    failwith("png write error");
+    caml_failwith("png write error");
   }
 
   /* use standard C stream */
@@ -204,7 +204,7 @@ value write_png_file_index( name, buffer, cmap, width, height )
       png_destroy_write_struct(&png_ptr, &info_ptr);
       fclose(fp);
       /* If we get here, we had a problem writing the file */
-      failwith("png write error (null colormap)");
+      caml_failwith("png write error (null colormap)");
     }
     png_set_PLTE( png_ptr, info_ptr, palette, num_palette );
   }
@@ -218,7 +218,7 @@ value write_png_file_index( name, buffer, cmap, width, height )
     png_bytep *row_pointers;
     char *buf = String_val(buffer);
 
-    row_pointers = (png_bytep*)stat_alloc(sizeof(png_bytep) * h);
+    row_pointers = (png_bytep*)caml_stat_alloc(sizeof(png_bytep) * h);
 
     rowbytes= png_get_rowbytes(png_ptr, info_ptr);
 #if 0
@@ -229,14 +229,14 @@ value write_png_file_index( name, buffer, cmap, width, height )
       png_destroy_write_struct(&png_ptr, &info_ptr);
       fclose(fp);
       /* If we get here, we had a problem writing the file */
-      failwith("png write error (illegal byte/pixel)");
+      caml_failwith("png write error (illegal byte/pixel)");
     }
     for(i=0; i< h; i++){
       row_pointers[i] = (png_bytep)(buf + rowbytes * i);
     }
 
     png_write_image(png_ptr, row_pointers);
-    stat_free((void*)row_pointers);
+    caml_stat_free((void*)row_pointers);
   }
 
   png_write_end(png_ptr, info_ptr);

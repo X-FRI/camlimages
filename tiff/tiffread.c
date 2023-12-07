@@ -83,19 +83,19 @@ value open_tiff_file_for_read( name )
 
     if( imagesample == 3 && photometric == PHOTOMETRIC_RGB ){
       if( imagebits != 8 ){
-	failwith("Sorry, tiff rgb file must be 24bit-color");
+	caml_failwith("Sorry, tiff rgb file must be 24bit-color");
       }
       r[3] = Val_int(0); /* RGB */
     } else if( imagesample == 4 && photometric == PHOTOMETRIC_SEPARATED ){
       if( imagebits != 8 ){
-	failwith("Sorry, tiff cmyk file must be 32bit-color");
+	caml_failwith("Sorry, tiff cmyk file must be 32bit-color");
       }
       r[3] = Val_int(1); /* CMYK */
     } else if( imagesample == 1 && imagebits == 1 ) { /* BW */
       r[3] = Val_int (photometric == PHOTOMETRIC_MINISWHITE ? 2 : 3);
     } else {
       fprintf(stderr, "photometric=%d, imagesample=%d, imagebits=%d\n", photometric, imagesample, imagebits);
-      failwith("Sorry, unsupported tiff format");
+      caml_failwith("Sorry, unsupported tiff format");
     }
 
     buf = _TIFFmalloc(TIFFScanlineSize(tif));
@@ -104,18 +104,18 @@ value open_tiff_file_for_read( name )
     r[1] = Val_int(imagelength);
     if ( runit == RESUNIT_INCH &&
 	 xres == yres ){
-      r[2] = copy_double( xres );
+      r[2] = caml_copy_double( xres );
     } else {
-      r[2] = copy_double ( -1.0 );
+      r[2] = caml_copy_double ( -1.0 );
     }
     /* r[3] is defined above */ 
     r[4] = (value)tif;
-    res = alloc_small(5,0);
+    res = caml_alloc_small(5,0);
     for(i=0; i<5; i++) Store_field(res, i, r[i]);
 
     CAMLreturn(res);
   } else {
-    failwith("failed to open tiff file");
+    caml_failwith("failed to open tiff file");
   }
 }
 
@@ -144,10 +144,10 @@ value close_tiff_file( tiffh )
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-value open_tiff_file_for_read(){ failwith("unsupported"); }
-value read_tiff_scanline(){ failwith("unsupported"); }
-value close_tiff_file(){ failwith("unsupported"); }
-value open_tiff_file_for_write(){ failwith("unsupported"); }
-value write_tiff_scanline(){ failwith("unsupported"); }
+value open_tiff_file_for_read(){ caml_failwith("unsupported"); }
+value read_tiff_scanline(){ caml_failwith("unsupported"); }
+value close_tiff_file(){ caml_failwith("unsupported"); }
+value open_tiff_file_for_write(){ caml_failwith("unsupported"); }
+value write_tiff_scanline(){ caml_failwith("unsupported"); }
 
 #endif // HAS_TIFF

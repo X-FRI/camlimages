@@ -50,7 +50,7 @@ value read_png_file_as_rgb24( name )
   filename = String_val( name );
 
   if (( fp = fopen(filename, "rb")) == NULL ){
-    failwith("png file open failed");
+    caml_failwith("png file open failed");
   }
 
    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
@@ -59,14 +59,14 @@ value read_png_file_as_rgb24( name )
 
   if( png_ptr == NULL ){
     fclose(fp);
-    failwith("it is not a png file.");
+    caml_failwith("it is not a png file.");
   }
 
   info_ptr = png_create_info_struct(png_ptr);
   if(info_ptr == NULL ){
     fclose(fp);
     png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-    failwith("not enough memory");
+    caml_failwith("not enough memory");
   }
 
   /* error handling */
@@ -75,7 +75,7 @@ value read_png_file_as_rgb24( name )
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
     fclose(fp);
     /* If we get here, we had a problem reading the file */
-    failwith("png read error");
+    caml_failwith("png read error");
   }
 
   /* use standard C stream */
@@ -110,7 +110,7 @@ value read_png_file_as_rgb24( name )
   if ( color_type != PNG_COLOR_TYPE_RGB || bit_depth != 8 ) {
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
     fclose(fp);
-    failwith("unsupported color type");
+    caml_failwith("unsupported color type");
   }
 
   rowbytes = png_get_rowbytes(png_ptr, info_ptr);
@@ -119,7 +119,7 @@ value read_png_file_as_rgb24( name )
   if (oversized(rowbytes, height) || oversized(sizeof(png_bytep), height)){
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
     fclose(fp);
-    failwith("png error: image contains oversized or bogus width and height");
+    caml_failwith("png error: image contains oversized or bogus width and height");
   }
   
   {
@@ -127,8 +127,8 @@ value read_png_file_as_rgb24( name )
     png_bytep *row_pointers;
     void * buf;
 
-    row_pointers = (png_bytep*) stat_alloc(sizeof(png_bytep) * height);
-    buf = stat_alloc( rowbytes * height );
+    row_pointers = (png_bytep*) caml_stat_alloc(sizeof(png_bytep) * height);
+    buf = caml_stat_alloc( rowbytes * height );
     for( i = 0; i < height; i ++ ){
       row_pointers[i] = buf + rowbytes * i;
     }
@@ -141,8 +141,8 @@ value read_png_file_as_rgb24( name )
       fclose(fp);
       /* If we get here, we had a problem reading the file */
       fprintf(stderr, "png short file\n");
-      stat_free(row_pointers);
-      stat_free(buf);
+      caml_stat_free(row_pointers);
+      caml_stat_free(buf);
       CAMLreturn(res);
     }
 
@@ -150,13 +150,13 @@ value read_png_file_as_rgb24( name )
     png_read_end(png_ptr, info_ptr);
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 
-    r = alloc_tuple(height);
+    r = caml_alloc_tuple(height);
     for( i = 0; i < height; i ++ ){
       tmp = caml_alloc_string(rowbytes);
       memcpy(String_val(tmp), buf+rowbytes*i, rowbytes);
       Store_field( r, i, tmp );
     }
-    res = alloc_small(3,0);
+    res = caml_alloc_small(3,0);
     Field( res, 0 ) =  Val_int(width);
     Field( res, 1 ) =  Val_int(height);
     Field( res, 2 ) =  r;
@@ -164,8 +164,8 @@ value read_png_file_as_rgb24( name )
     /* close the file */
     fclose(fp);
 
-    stat_free((void*)row_pointers);
-    stat_free(buf);
+    caml_stat_free((void*)row_pointers);
+    caml_stat_free(buf);
     CAMLreturn(res);
   }
 }
@@ -183,7 +183,7 @@ value Val_PngColor( png_color *col )
   r[0] = Val_int( col->red );
   r[1] = Val_int( col->green );
   r[2] = Val_int( col->blue );
-  res = alloc_small(3,0);
+  res = caml_alloc_small(3,0);
   for(i=0; i<3; i++) Field(res, i) = r[i];
 
   CAMLreturn(res);
@@ -196,7 +196,7 @@ value Val_PngPalette( png_colorp plte, int len )
   int i;
 
   if ( len != 0 ) {
-    cmap = alloc_tuple( len );
+    cmap = caml_alloc_tuple( len );
     for(i= 0; i< len; i++){
         Store_field(cmap, i, Val_PngColor( &plte[i] ));
     }
@@ -224,7 +224,7 @@ value read_png_file( name )
   filename = String_val( name );
 
   if (( fp = fopen(filename, "rb")) == NULL ){
-    failwith("png file open failed");
+    caml_failwith("png file open failed");
   }
 
    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
@@ -233,14 +233,14 @@ value read_png_file( name )
 
   if( png_ptr == NULL ){
     fclose(fp);
-    failwith("it is not a png file.");
+    caml_failwith("it is not a png file.");
   }
 
   info_ptr = png_create_info_struct(png_ptr);
   if(info_ptr == NULL ){
     fclose(fp);
     png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-    failwith("not enough memory");
+    caml_failwith("not enough memory");
   }
 
   /* error handling */
@@ -249,7 +249,7 @@ value read_png_file( name )
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
     fclose(fp);
     /* If we get here, we had a problem reading the file */
-    failwith("png read error");
+    caml_failwith("png read error");
   }
 
   /* use standard C stream */
@@ -295,8 +295,8 @@ value read_png_file( name )
     void *buf;
     char mesg[256];
 
-    buf = stat_alloc(rowbytes * height);
-    row_pointers = (png_bytep*)stat_alloc(sizeof(png_bytep) * height);
+    buf = caml_stat_alloc(rowbytes * height);
+    row_pointers = (png_bytep*)caml_stat_alloc(sizeof(png_bytep) * height);
     for(i=0; i<height; i++){
       row_pointers[i] = buf + rowbytes * i; 
     }
@@ -309,13 +309,13 @@ value read_png_file( name )
       fclose(fp);
       /* If we get here, we had a problem reading the file */
       fprintf(stderr, "png short file\n");
-      stat_free((void*)row_pointers);
-      stat_free(buf);
+      caml_stat_free((void*)row_pointers);
+      caml_stat_free(buf);
       CAMLreturn(res);
     }
     png_read_image(png_ptr, row_pointers);
 
-    res = alloc_tuple(3);
+    res = caml_alloc_tuple(3);
 
     switch(color_type){
     case PNG_COLOR_TYPE_PALETTE:
@@ -345,13 +345,13 @@ fprintf(stderr, "pngread.c: byte/pix= %d/%d\n", (int)(rowbytes), (int)width); ff
           fclose(fp);
           sprintf(mesg, "png error (unsupported bytes/pixel=%d/%d)",
                   (int)rowbytes, (int)width);
-	  stat_free(buf);
-          stat_free((void*)row_pointers);
-          failwith(mesg);
+	  caml_stat_free(buf);
+          caml_stat_free((void*)row_pointers);
+          caml_failwith(mesg);
         }
 
-        r1 = alloc( 2, tag );
-        r2 = alloc_tuple(height);
+        r1 = caml_alloc( 2, tag );
+        r2 = caml_alloc_tuple(height);
         for( i = 0; i < height; i ++ ){
             tmp = caml_alloc_string(rowbytes);
             memcpy(String_val(tmp), buf+rowbytes*i, rowbytes);
@@ -373,10 +373,10 @@ fprintf(stderr, "pngread.c: byte/pix= %d/%d\n", (int)(rowbytes), (int)width); ff
         fprintf(stderr, "pngread.c: rgb image\n"); fflush(stderr);
 sc      fprintf(stderr, "width rowbytes: %d %d\n", width, rowbytes); fflush(stderr);
       */
-      r1 = alloc( 1,
+      r1 = caml_alloc( 1,
                   color_type == PNG_COLOR_TYPE_RGB ?
                                 PNG_TAG_RGB24 : PNG_TAG_RGBA32 );
-      r2 = alloc_tuple( height );
+      r2 = caml_alloc_tuple( height );
       for( i = 0; i < height; i ++ ){
           tmp = caml_alloc_string(rowbytes);
           memcpy(String_val(tmp), buf+rowbytes*i, rowbytes);
@@ -391,9 +391,9 @@ sc      fprintf(stderr, "width rowbytes: %d %d\n", width, rowbytes); fflush(stde
     default:
       sprintf(mesg, "png error (unsupported color_type=%d)",
               (int)color_type);
-      stat_free(buf);
-      stat_free((void*)row_pointers);
-      failwith(mesg);
+      caml_stat_free(buf);
+      caml_stat_free((void*)row_pointers);
+      caml_failwith(mesg);
     }
 
     png_read_end(png_ptr, info_ptr);
@@ -401,8 +401,8 @@ sc      fprintf(stderr, "width rowbytes: %d %d\n", width, rowbytes); fflush(stde
 
     /* close the file */
     fclose(fp);
-    stat_free(buf);
-    stat_free((void*)row_pointers);
+    caml_stat_free(buf);
+    caml_stat_free((void*)row_pointers);
 
     CAMLreturn(res);
   }
@@ -415,11 +415,11 @@ sc      fprintf(stderr, "width rowbytes: %d %d\n", width, rowbytes); fflush(stde
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-value read_png_file_as_rgb24(){ failwith("unsupported"); }
-value Val_PngColor(){ failwith("unsupported"); }
-value Val_PngPalette(){ failwith("unsupported"); }
-value read_png_file(){ failwith("unsupported"); }
-value write_png_file_rgb(){ failwith("unsupported"); }
-value write_png_file_index(){ failwith("unsupported"); }
+value read_png_file_as_rgb24(){ caml_failwith("unsupported"); }
+value Val_PngColor(){ caml_failwith("unsupported"); }
+value Val_PngPalette(){ caml_failwith("unsupported"); }
+value read_png_file(){ caml_failwith("unsupported"); }
+value write_png_file_rgb(){ caml_failwith("unsupported"); }
+value write_png_file_index(){ caml_failwith("unsupported"); }
 
 #endif // HAS_PNG

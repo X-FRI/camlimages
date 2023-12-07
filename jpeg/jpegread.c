@@ -97,7 +97,7 @@ value caml_val_jpeg_marker( jpeg_saved_marker_ptr p )
     tmp = caml_alloc_string(p->data_length);
     memcpy( String_val(tmp), p->data, p->data_length);
 
-    res = alloc_small(2,0);
+    res = caml_alloc_small(2,0);
     Field(res, 0) = Val_int(p->marker);
     Field(res, 1) = tmp;
     // fprintf(stderr, "mark %x %d\n", p->marker, p->data_length);
@@ -115,8 +115,8 @@ value caml_val_jpeg_rev_markers( jpeg_saved_marker_ptr q )
         hd = caml_val_jpeg_marker(p);
 
         // This cannot come before the call of caml_val_jpeg_marker!
-        // New allocation with non-initialized blocks crashes GC!
-        tmp = alloc_small(2,0); 
+        // New caml_allocation with non-initialized blocks crashes GC!
+        tmp = caml_alloc_small(2,0); 
         Field(tmp, 0) = hd;
         Field(tmp, 1) = res;
         res = tmp;
@@ -134,7 +134,7 @@ value open_jpeg_file_for_read( name )
 
   char *filename;
   /* This struct contains the JPEG decompression parameters and pointers to
-   * working space (which is allocated as needed by the JPEG library).
+   * working space (which is caml_allocated as needed by the JPEG library).
    */
   struct jpeg_decompress_struct* cinfop;
   /* We use our private extension JPEG error handler.
@@ -149,7 +149,7 @@ value open_jpeg_file_for_read( name )
   filename= String_val( name );
 
   if ((infile = fopen(filename, "rb")) == NULL) {
-    failwith("failed to open jpeg file");
+    caml_failwith("failed to open jpeg file");
   }
 
   cinfop = malloc(sizeof (struct jpeg_decompress_struct));
@@ -162,7 +162,7 @@ value open_jpeg_file_for_read( name )
    */
 
 
-  /* Step 1: allocate and initialize JPEG decompression object */
+  /* Step 1: caml_allocate and initialize JPEG decompression object */
 
   /* We set up the normal JPEG error routines, then override error_exit. */
   cinfop->err = jpeg_std_error(&jerrp->pub);
@@ -175,7 +175,7 @@ value open_jpeg_file_for_read( name )
     jpeg_destroy_decompress(cinfop);
     free(jerrp);
     fclose(infile);
-    failwith(jpg_error_message);
+    caml_failwith(jpg_error_message);
   }
   /* Now we can initialize the JPEG decompression object. */
   jpeg_create_decompress(cinfop);
@@ -196,14 +196,14 @@ value open_jpeg_file_for_read( name )
 
   r[0] = Val_int(cinfop->image_width);
   r[1] = Val_int(cinfop->image_height);
-  r[2] = alloc_small(3,0);
+  r[2] = caml_alloc_small(3,0);
   Field(r[2], 0) = (value)cinfop;
   Field(r[2], 1) = (value)infile;
   Field(r[2], 2) = (value)jerrp;
 
   r[3] = caml_val_jpeg_rev_markers( cinfop->marker_list );
 
-  res = alloc_small(4,0);
+  res = caml_alloc_small(4,0);
   for(i=0; i<4; i++) Field(res, i) = r[i];
 
   CAMLreturn(res);
@@ -260,11 +260,11 @@ value open_jpeg_file_for_read_start( jpegh )
   // CR jfuruse: integer overflow
   r[0] = Val_int(cinfop->output_width);
   r[1] = Val_int(cinfop->output_height);
-  r[2] = alloc_small(3,0);
+  r[2] = caml_alloc_small(3,0);
   Field(r[2], 0) = (value)cinfop;
   Field(r[2], 1) = (value)infile;
   Field(r[2], 2) = (value)jerrp;
-  res = alloc_small(3,0);
+  res = caml_alloc_small(3,0);
   for(i=0; i<3; i++) Field(res, i) = r[i];
 
   DEBUGF("cinfop= %d infile= %d %d %d \n", (int)cinfop, (int)infile, cinfop->output_scanline, cinfop->output_height); 
@@ -345,19 +345,19 @@ value close_jpeg_file_for_read( jpegh )
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-value jpeg_set_scale_denom(){ failwith("unsupported"); }
-value open_jpeg_file_for_read(){ failwith("unsupported"); }
-value open_jpeg_file_for_read_start(){ failwith("unsupported"); }
-value read_jpeg_scanline(){ failwith("unsupported"); }
-value read_jpeg_scanlines(){ failwith("unsupported"); }
-value close_jpeg_file_for_read(){ failwith("unsupported"); }
-value open_jpeg_file_for_write_colorspace(){ failwith("unsupported"); }
-value open_jpeg_file_for_write(){ failwith("unsupported"); }
-value open_jpeg_file_for_write_cmyk(){ failwith("unsupported"); }
-value write_jpeg_scanline(){ failwith("unsupported"); }
-value close_jpeg_file_for_write(){ failwith("unsupported"); }
-value read_JPEG_file(){ failwith("unsupported"); }
-value write_JPEG_file(){ failwith("unsupported"); }
-void caml_jpeg_write_marker(){ failwith("unsupported"); }
+value jpeg_set_scale_denom(){ caml_failwith("unsupported"); }
+value open_jpeg_file_for_read(){ caml_failwith("unsupported"); }
+value open_jpeg_file_for_read_start(){ caml_failwith("unsupported"); }
+value read_jpeg_scanline(){ caml_failwith("unsupported"); }
+value read_jpeg_scanlines(){ caml_failwith("unsupported"); }
+value close_jpeg_file_for_read(){ caml_failwith("unsupported"); }
+value open_jpeg_file_for_write_colorspace(){ caml_failwith("unsupported"); }
+value open_jpeg_file_for_write(){ caml_failwith("unsupported"); }
+value open_jpeg_file_for_write_cmyk(){ caml_failwith("unsupported"); }
+value write_jpeg_scanline(){ caml_failwith("unsupported"); }
+value close_jpeg_file_for_write(){ caml_failwith("unsupported"); }
+value read_JPEG_file(){ caml_failwith("unsupported"); }
+value write_JPEG_file(){ caml_failwith("unsupported"); }
+void caml_jpeg_write_marker(){ caml_failwith("unsupported"); }
 
 #endif // HAS_JPEG

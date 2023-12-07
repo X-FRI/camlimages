@@ -79,7 +79,7 @@ value open_jpeg_file_for_write_colorspace( name, width, height, qual, colorspace
   quality= Int_val(qual);
  
   if ((outfile = fopen(filename, "wb")) == NULL) {
-    failwith("failed to open jpeg file");
+    caml_failwith("failed to open jpeg file");
   }
 
   cinfop = malloc(sizeof (struct jpeg_compress_struct));
@@ -94,7 +94,7 @@ value open_jpeg_file_for_write_colorspace( name, width, height, qual, colorspace
     jpeg_destroy_compress(cinfop);
     free(jerrp);
     fclose(outfile);
-    failwith(jpg_error_message);
+    caml_failwith(jpg_error_message);
   }
 
   jpeg_create_compress(cinfop);
@@ -108,7 +108,7 @@ value open_jpeg_file_for_write_colorspace( name, width, height, qual, colorspace
   jpeg_set_quality(cinfop, quality, TRUE);
   jpeg_start_compress(cinfop, TRUE);
 
-  res = alloc_small(3,0);
+  res = caml_alloc_small(3,0);
   Field(res, 0) = (value)cinfop;
   Field(res, 1) = (value)outfile;
   Field(res, 2) = (value)jerrp;

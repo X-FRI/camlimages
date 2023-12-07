@@ -43,7 +43,7 @@ value Val_GifColorType( GifColorType *color )
   r[0] = Val_int( color->Red );
   r[1] = Val_int( color->Green );
   r[2] = Val_int( color->Blue );
-  res = alloc_small(3,0);
+  res = caml_alloc_small(3,0);
   for(i=0; i<3; i++) Field(res, i) = r[i];
 #ifdef DEBUG_GIF
 fprintf(stderr, "Color(%d,%d,%d)\n", color->Red, color->Green, color->Blue);
@@ -64,7 +64,7 @@ value Val_ColorMapObject( ColorMapObject *colorMap )
     fflush(stderr);
 #endif 
 
-    cmap = alloc_tuple(colorMap->ColorCount);
+    cmap = caml_alloc_tuple(colorMap->ColorCount);
     for(i= 0; i< colorMap->ColorCount; i++){
         Store_field(cmap,i, Val_GifColorType( &colorMap->Colors[i] ));
     }
@@ -73,7 +73,7 @@ value Val_ColorMapObject( ColorMapObject *colorMap )
     fprintf(stderr, "Colormap(0)...\n");
     fflush(stderr);
 #endif 
-    cmap = Atom(0); /* cmap = alloc_tuple(0); is WRONG!! */
+    cmap = Atom(0); /* cmap = caml_alloc_tuple(0); is WRONG!! */
   }
   CAMLreturn(cmap);
 }
@@ -113,7 +113,7 @@ fflush(stderr);
   r[3] = Val_int( imageDesc->Height );
   r[4] = Val_int( imageDesc->Interlace );
   r[5] = Val_ColorMapObject( imageDesc->ColorMap );
-  res = alloc_small(6,0);
+  res = caml_alloc_small(6,0);
   for(i=0; i<6; i++) Field(res, i) = r[i];
   CAMLreturn(res);
 }
@@ -131,7 +131,7 @@ value Val_ScreenInfo( GifFileType *GifFile )
   r[2] = Val_int(GifFile->SColorResolution);
   r[3] = Val_int(GifFile->SBackGroundColor);
   r[4] = Val_ColorMapObject(GifFile->SColorMap);
-  res = alloc_small(5,0);
+  res = caml_alloc_small(5,0);
   for(i=0; i<5; i++) Field(res, i) = r[i];
 
   CAMLreturn(res);
@@ -153,12 +153,12 @@ value dGifOpenFileName( value name )
 #endif
 
   if(GifFile == NULL){
-    failwith("DGifOpenFileName");
+    caml_failwith("DGifOpenFileName");
   }
 
   r[0] = Val_ScreenInfo( GifFile );
   r[1] = (value) GifFile;
-  res = alloc_small(2,0);
+  res = caml_alloc_small(2,0);
   for(i=0; i<2; i++) Field(res, i) = r[i];
 
   CAMLreturn(res);
@@ -187,7 +187,7 @@ value dGifGetRecordType( value hdl )
 
   GifRecordType RecordType;
   if (DGifGetRecordType((GifFileType*) hdl, &RecordType) == GIF_ERROR) {
-    failwith("DGifGetRecordType");
+    caml_failwith("DGifGetRecordType");
   }
   CAMLreturn(Val_int(RecordType));
 }
@@ -197,7 +197,7 @@ value dGifGetImageDesc( value hdl )
   CAMLparam1(hdl);
 
   if (DGifGetImageDesc( (GifFileType*) hdl )  == GIF_ERROR){
-    failwith("DGIFGetImageDesc");
+    caml_failwith("DGIFGetImageDesc");
   }
   CAMLreturn(Val_GifImageDesc( &((GifFileType*) hdl)-> Image ));
 }
@@ -212,12 +212,12 @@ value dGifGetLine( value hdl )
   if( oversized( GifFile->Image.Width, sizeof(GifPixelType) ) ){
     failwith_oversized("gif");
   }
-  buf = alloc_string( GifFile->Image.Width * sizeof(GifPixelType) ); 
+  buf = caml_alloc_string( GifFile->Image.Width * sizeof(GifPixelType) ); 
 
   if( DGifGetLine(GifFile, (unsigned char*)String_val(buf), GifFile->Image.Width ) 
       == GIF_ERROR ){
     // PrintGifError ();
-    failwith("DGifGetLine");
+    caml_failwith("DGifGetLine");
   }
   CAMLreturn(buf);
 }
@@ -235,19 +235,19 @@ value dGifGetExtension( value hdl )
   exts = Val_int(0);
 
   if (DGifGetExtension(GifFile,&func, &extData) == GIF_ERROR){
-    failwith("DGifGetExtension");
+    caml_failwith("DGifGetExtension");
   }
 
   while( extData != NULL ){
-    ext= alloc_string(extData[0]);
+    ext= caml_alloc_string(extData[0]);
     memcpy(String_val(ext), &extData[1], extData[0]);
-    newres = alloc_small(2,0);
+    newres = caml_alloc_small(2,0);
     Field(newres, 0)= ext;
     Field(newres, 1)= exts;
     exts= newres;
     DGifGetExtensionNext(GifFile, &extData);
   }
-  res = alloc_small(2,0);
+  res = caml_alloc_small(2,0);
   Field(res,0) = Val_int(func);
   Field(res,1) = exts;
 
@@ -261,21 +261,21 @@ value dGifGetExtension( value hdl )
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-value Val_GifColorType(){ failwith("unsupported"); }
-value Val_ColorMapObject(){ failwith("unsupported"); }
-value Val_GifImageDesc(){ failwith("unsupported"); }
-value Val_ScreenInfo(){ failwith("unsupported"); }
-value dGifOpenFileName(){ failwith("unsupported"); }
-value dGifCloseFile(){ failwith("unsupported"); }
-value dGifGetRecordType(){ failwith("unsupported"); }
-value dGifGetImageDesc(){ failwith("unsupported"); }
-value dGifGetLine(){ failwith("unsupported"); }
-value dGifGetExtension(){ failwith("unsupported"); }
-value eGifOpenFileName(){ failwith("unsupported"); }
-value eGifCloseFile(){ failwith("unsupported"); }
-value eGifPutScreenDesc(){ failwith("unsupported"); }
-value eGifPutImageDesc(){ failwith("unsupported"); }
-value eGifPutLine(){ failwith("unsupported"); }
-value eGifPutExtension(){ failwith("unsupported"); }
+value Val_GifColorType(){ caml_failwith("unsupported"); }
+value Val_ColorMapObject(){ caml_failwith("unsupported"); }
+value Val_GifImageDesc(){ caml_failwith("unsupported"); }
+value Val_ScreenInfo(){ caml_failwith("unsupported"); }
+value dGifOpenFileName(){ caml_failwith("unsupported"); }
+value dGifCloseFile(){ caml_failwith("unsupported"); }
+value dGifGetRecordType(){ caml_failwith("unsupported"); }
+value dGifGetImageDesc(){ caml_failwith("unsupported"); }
+value dGifGetLine(){ caml_failwith("unsupported"); }
+value dGifGetExtension(){ caml_failwith("unsupported"); }
+value eGifOpenFileName(){ caml_failwith("unsupported"); }
+value eGifCloseFile(){ caml_failwith("unsupported"); }
+value eGifPutScreenDesc(){ caml_failwith("unsupported"); }
+value eGifPutImageDesc(){ caml_failwith("unsupported"); }
+value eGifPutLine(){ caml_failwith("unsupported"); }
+value eGifPutExtension(){ caml_failwith("unsupported"); }
 
 #endif // HAS_GIF

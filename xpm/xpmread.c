@@ -45,7 +45,7 @@ value read_xpm_file( name )
     fprintf(stderr, "colors = %d\n", image.ncolors);
     */
 
-    cmap = alloc_tuple( image.ncolors );
+    cmap = caml_alloc_tuple( image.ncolors );
     for(i=0; i<image.ncolors; i++){
       XpmColor *color = image.colorTable + i;
       /*
@@ -67,10 +67,10 @@ value read_xpm_file( name )
       }
     }
 
-    { /* image map alloc */
+    { /* image map caml_alloc */
       int size = image.width * image.height;
 
-      imap = alloc_tuple( size );
+      imap = caml_alloc_tuple( size );
       for(i=0; i<size; i++){
           Store_field(imap,i,Val_int(image.data[i]));
       }
@@ -78,7 +78,7 @@ value read_xpm_file( name )
 
     
     /* connect the result */
-    result = alloc_small(4,0);
+    result = caml_alloc_small(4,0);
     Field(result,0) = Val_int(image.width);
     Field(result,1) = Val_int(image.height);
     Field(result,2) = cmap;
@@ -88,7 +88,7 @@ value read_xpm_file( name )
 
     CAMLreturn(result);
   } else {
-    failwith("failed to open xpm file");
+    caml_failwith("failed to open xpm file");
   }
 }
 
@@ -99,6 +99,6 @@ value read_xpm_file( name )
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-value read_xpm_file(){ failwith("unsupported"); }
+value read_xpm_file(){ caml_failwith("unsupported"); }
 
 #endif
