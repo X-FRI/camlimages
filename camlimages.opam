@@ -11,7 +11,18 @@ depends: [
   "ocamlfind" { build }
   "stdio"
 ]
-depopts: ["lablgtk" "graphics"]
+depopts: [
+  "lablgtk"
+  "graphics"
+  "conf-libpng"
+  "conf-libjpeg"
+  # "conf-libexif"
+  # "conf-libtiff"
+  # "conf-libxpm"
+  "conf-freetype"
+  "conf-libgif"
+  "conf-ghostscript"
+]
 conflicts: [
   "lablgtk" {< "2.18.6"}
 ]
